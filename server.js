@@ -1,6 +1,9 @@
-const express = require('express');
-const connectToDB = require('./utils/connectToDB');
-const dotenv = require(dotenv).config();
+const express = require("express");
+const connectToDB = require("./utils/connectToDB");
+const dotenv = require("dotenv").config();
+const conversationRoutes = require("./routes/conversationRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 // ----- SERVER CONFIG -----
 
@@ -10,9 +13,8 @@ const app = express();
 connectToDB();
 
 app.listen(process.env.PORT, () => {
-    console.log("Express listening on port...");
+    console.log("Express listening on port..." + process.env.PORT);
 });
-
 
 // ----- MIDDLEWARE -----
 
@@ -26,5 +28,6 @@ app.use((req, res, next) => {
 
 // ----- ROUTERS -----
 
-app.use("/routes/messageRoutes", messageRoutes);
-app.use("/routes/userRoutes", userRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/conversations", conversationRoutes);
