@@ -29,10 +29,11 @@ const signup = async (req, res) => {
     }
 };
 
-const addRequest = async (req, res) => {
-    const { user, userId } = req.body;
-    requestedUser = await User.findById({ _id: userId })
-    addRequestToUser()
+const testAuth = async (req, res) => {
+    res.status(200).json({ message: "Authorization success", user_email: req.user.email })
+    // const { user, userId } = req.body;
+    // requestedUser = await User.findById({ _id: userId })
+    // addRequestToUser()
 }
 
-module.exports = { login, signup, addRequest };
+module.exports = { login, signup, testAuth };
