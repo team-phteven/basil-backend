@@ -29,4 +29,10 @@ const signup = async (req, res) => {
     }
 };
 
-module.exports = { login, signup };
+const addRequest = async (req, res) => {
+    const { user, userId } = req.body;
+    requestedUser = await User.findById({ _id: userId })
+    addRequestToUser()
+}
+
+module.exports = { login, signup, addRequest };
