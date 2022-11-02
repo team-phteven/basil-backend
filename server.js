@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 const express = require("express");
 const connectToDB = require("./utils/connectToDB");
 const dotenv = require("dotenv").config();
 const conversationRoutes = require("./routes/conversationRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const userRoutes = require("./routes/userRoutes");
+=======
+const express = require('express');
+const connectToDB = require('./utils/connectToDB');
+const dotenv = require('dotenv').config();
+
+const userRoutes = require('./routes/userRoutes');
+>>>>>>> main
 
 // ----- SERVER CONFIG -----
 
@@ -20,6 +28,7 @@ app.listen(process.env.PORT, () => {
 
 // use json method
 app.use(express.json());
+
 // log requests
 app.use((req, res, next) => {
     console.log(req.path, req.method);
@@ -28,6 +37,10 @@ app.use((req, res, next) => {
 
 // ----- ROUTERS -----
 
+<<<<<<< HEAD
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/conversations", conversationRoutes);
+=======
+app.use("/api/users", userRoutes);
+>>>>>>> main
