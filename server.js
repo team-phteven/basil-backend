@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 const express = require("express");
 const connectToDB = require("./utils/connectToDB");
 const dotenv = require("dotenv").config();
-const conversationRoutes = require("./routes/conversationRoutes");
-const messageRoutes = require("./routes/messageRoutes");
-const userRoutes = require("./routes/userRoutes");
-=======
-const express = require('express');
-const connectToDB = require('./utils/connectToDB');
-const dotenv = require('dotenv').config();
 
-const userRoutes = require('./routes/userRoutes');
->>>>>>> main
+const userRoutes = require("./routes/userRoutes");
+const conversationRoutes = require("./routes/conversationRoutes");
 
 // ----- SERVER CONFIG -----
 
@@ -37,10 +29,6 @@ app.use((req, res, next) => {
 
 // ----- ROUTERS -----
 
-<<<<<<< HEAD
-app.use("/api/messages", messageRoutes);
-app.use("/api/users", userRoutes);
+// app.use("/api/messages", messageRoutes);
 app.use("/api/conversations", conversationRoutes);
-=======
 app.use("/api/users", userRoutes);
->>>>>>> main
