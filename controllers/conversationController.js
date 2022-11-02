@@ -2,13 +2,16 @@ const Conversation = require("../models/conversationModel");
 // const User = require("../models/userModel");
 
 const createConversation = async (req, res) => {
-    const { title, load, reps } = req.body;
+    const { users, isGroupConversation } = req.body;
 
-    // add doc to db
+    const conversationData = {
+        isGroupConversation: isGroupConversation,
+        users: users,
+    };
+
     try {
-        const user_id = req.user._id;
-        const workout = await Workout.create({ title, load, reps, user_id });
-        res.status(200).json(workout);
+        const newConversation = await Conversation.create(conversationData);
+        res.status(200).json(newConversation);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
