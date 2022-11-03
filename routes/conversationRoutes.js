@@ -1,4 +1,5 @@
 const express = require("express");
+const { authorize } = require("../middleware/authorize");
 const {
     createConversation,
     getConversations,
@@ -6,7 +7,7 @@ const {
 
 const router = express.Router();
 
-router.get("/", getConversations);
+router.get("/", authorize, getConversations);
 router.post("/", createConversation);
 
 module.exports = router;
