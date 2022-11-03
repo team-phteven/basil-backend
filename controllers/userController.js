@@ -29,11 +29,30 @@ const signup = async (req, res) => {
     }
 };
 
-const testAuth = async (req, res) => {
-    res.status(200).json({ message: "Authorization success", user_email: req.user.email })
-    // const { user, userId } = req.body;
-    // requestedUser = await User.findById({ _id: userId })
-    // addRequestToUser()
+const addRequest = async (req, res) => {
+    try {
+        const { contactId } = req.body;
+        const { _id } = req.user;
+        const user = await User.addRequest(contactId, _id)
+        res.status(200).json({message: "success", user})
+    } catch (error) {
+        res.status(400).json({ error: error.message})
+    }
 }
 
-module.exports = { login, signup, testAuth };
+const denyRequest = async (req, res) => {
+    try {
+        const { contactId } = req.body;
+        const { _id } = req.user;
+        const user = await User.denyRequest(contactId, _id);
+        res.status(200).json({ message: "success", user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+const testAuth = async (req, res) => {
+    res.status(200).json({ message: "Authorization success", user_email: req.user.email })
+}
+
+module.exports = { login, signup, addRequest, testAuth };

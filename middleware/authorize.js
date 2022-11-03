@@ -15,8 +15,7 @@ const authorize = async (req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             // using the id from the token, find the user to add to request (filter out password)
             req.user = await User.findById(decoded._id).select("-password");
-            console.log(req.user)
-            // go to next action, the req now has a user property with the logged in users details
+            // go to next action, the req now contains a 'user' property with user's details
             next();
         } catch (error) {
             res.status(401).json({
