@@ -2,15 +2,18 @@ const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
 
 const createConversation = async (req, res) => {
-    const { usersArray, isGroup, user } = req.body;
+    // Just a heads up: the authorization method doesn't put 'user' prop in req.body
+    // req.user is its own property. See below for how to deconstruct the id:
+    const { usersArray, isGroup } = req.body;
+    const { _id } = req.user;
 
     const contactId = usersArray[0];
-
+    // tested! this is working :)
     if (!isGroup) {
-        User.removeRequest(contactId, user._id);
+        User.removeRequest(contactId, _id);
     }
 
-    usersArray.push(user._id);
+    usersArray.push(_id);
 
     try {
         const newConversation = await Conversation.new(usersArray, isGroup);
