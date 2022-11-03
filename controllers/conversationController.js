@@ -59,10 +59,10 @@ const renameGroupConversation = async (req, res) => {
 const addToGroupConversation = async (req, res) => {
     const { conversationId, contactId } = req.body;
 
-    const updatedConversation = await Chat.findByIdAndUpdate(
-        chatId,
+    const updatedConversation = await Conversation.findByIdAndUpdate(
+        conversationId,
         {
-            $push: { users: conversationId },
+            $push: { users: contactId },
         },
         {
             new: true,
