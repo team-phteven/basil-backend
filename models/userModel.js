@@ -31,7 +31,7 @@ const userSchema = new Schema({
     },
     requests: [
         {
-            type: mongoose.SchemaTypes.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
     ],
@@ -88,6 +88,36 @@ userSchema.statics.login = async function (email, password) {
         throw Error("Incorrect password");
     }
 
+    return user;
+};
+
+userSchema.statics.addRequest = async function (contactId, _id) {
+    // find requested user by email and push the logged in user's id to their requests
+    // addToSet means it will push to the array only if it is not already there
+    const user = await this.findByIdAndUpdate(
+        { contactId },
+        { $addToSet: {requests: _id }},
+        { new: true }
+    );
+    // throw error if user doesn't exist
+    if (!user) {
+        throw Error("User with this email does not exist.");
+    }
+    return user;
+};
+
+userSchema.statics.denyRequest = async function (contactId, _id) {
+    // find requested user by email and push the logged in user's id to their requests
+    // addToSet means it will push to the array only if it is not already there
+    const user = await this.findByIdAndUpdate(
+        { contactId },
+        { $addToSet: { requests: _id } },
+        { new: true }
+    );
+    // throw error if user doesn't exist
+    if (!user) {
+        throw Error("User with this email does not exist.");
+    }
     return user;
 };
 
