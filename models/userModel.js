@@ -95,28 +95,28 @@ userSchema.statics.addRequest = async function (contactId, _id) {
     // find requested user by email and push the logged in user's id to their requests
     // addToSet means it will push to the array only if it is not already there
     const user = await this.findByIdAndUpdate(
-        { contactId },
+        { _id: contactId },
         { $addToSet: {requests: _id }},
         { new: true }
     );
     // throw error if user doesn't exist
     if (!user) {
-        throw Error("User with this email does not exist.");
+        throw Error("User with this ID does not exist.");
     }
     return user;
 };
 
-userSchema.statics.denyRequest = async function (contactId, _id) {
+userSchema.statics.declineRequest = async function (contactId, _id) {
     // find requested user by email and push the logged in user's id to their requests
     // addToSet means it will push to the array only if it is not already there
     const user = await this.findByIdAndUpdate(
-        { contactId },
-        { $addToSet: { requests: _id } },
+        { _id: _id },
+        { $pull: { requests: contactId } },
         { new: true }
     );
     // throw error if user doesn't exist
     if (!user) {
-        throw Error("User with this email does not exist.");
+        throw Error("User with this ID does not exist.");
     }
     return user;
 };
