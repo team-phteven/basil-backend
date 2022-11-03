@@ -4,6 +4,7 @@ const dotenv = require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 // ----- SERVER CONFIG -----
 
@@ -32,3 +33,4 @@ app.use((req, res, next) => {
 // app.use("/api/messages", messageRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/messages", messageRoutes);
