@@ -15,27 +15,21 @@ const conversationSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-conversationSchema.statics.new = async function (usersArray, isGroup) {
-    const conversationData = {
-        isGroupConversation: isGroup,
-        users: usersArray,
-    };
+conversationSchema.statics.new = async function (users, isGroupConversation) {
 
     const exists = await this.find({
         isGroupConversation: false,
         $and: [
-            { users: { $elemMatch: { $eq: usersArray[0] } } },
-            { users: { $elemMatch: { $eq: usersArray[1] } } },
+            { users: { $elemMatch: { $eq: users[0] } } },
+            { users: { $elemMatch: { $eq: users[1] } } },
         ],
     });
-
-    console.log(exists);
 
     if (exists[0]) {
         throw new Error("Conversation already exists.");
     }
 
-    const newConversation = await this.create(conversationData);
+    const newConversation = await this.create({users, isGroupConversation});
     return newConversation;
 };
 
