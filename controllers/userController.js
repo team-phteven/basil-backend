@@ -9,7 +9,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.login(email, password);
-        const name = `${user.firstName} ${user.lastName}`
+        const name = `${user.firstName} ${user.lastName}`;
         const token = createToken(user._id);
         res.status(200).json({ name, email, avatar: user.avatar, token });
     } catch (error) {
@@ -20,7 +20,13 @@ const login = async (req, res) => {
 const signup = async (req, res) => {
     const { firstName, lastName, email, password, avatar } = req.body;
     try {
-        const user = await User.signup(firstName, lastName, email, password, avatar)
+        const user = await User.signup(
+            firstName,
+            lastName,
+            email,
+            password,
+            avatar
+        );
         const name = `${user.firstName} ${user.lastName}`;
         const token = createToken(user._id);
         res.status(200).json({ name, email, avatar: user.avatar, token });
@@ -33,12 +39,12 @@ const addRequest = async (req, res) => {
     try {
         const { contactId } = req.body;
         const { _id } = req.user;
-        const user = await User.addRequest(contactId, _id)
-        res.status(200).json({message: "success", user})
+        const user = await User.addRequest(contactId, _id);
+        res.status(200).json({ message: "success", user });
     } catch (error) {
-        res.status(400).json({ error: error.message})
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 const declineRequest = async (req, res) => {
     try {
@@ -49,10 +55,13 @@ const declineRequest = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}
+};
 
 const testAuth = async (req, res) => {
-    res.status(200).json({ message: "Authorization success", user_email: req.user.email })
-}
+    res.status(200).json({
+        message: "Authorization success",
+        user_email: req.user.email,
+    });
+};
 
 module.exports = { login, signup, addRequest, declineRequest, testAuth };
