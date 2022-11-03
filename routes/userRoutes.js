@@ -6,7 +6,7 @@ const {
     signup,
     addRequest,
     declineRequest,
-    acceptRequest,
+    // acceptRequest,
     testAuth,
 } = require("../controllers/userController");
 const { authorize } = require("../middleware/authorize");
