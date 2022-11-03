@@ -22,7 +22,7 @@ conversationSchema.statics.new = async function (usersArray, isGroup) {
     };
 
     const exists = await this.find({
-        isGroupChat: false,
+        isGroupConversation: false,
         $and: [
             { users: { $elemMatch: { $eq: usersArray[0] } } },
             { users: { $elemMatch: { $eq: usersArray[1] } } },
