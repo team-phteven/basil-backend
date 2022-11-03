@@ -106,9 +106,7 @@ userSchema.statics.addRequest = async function (contactId, _id) {
     return user;
 };
 
-userSchema.statics.declineRequest = async function (contactId, _id) {
-    // find requested user by email and push the logged in user's id to their requests
-    // addToSet means it will push to the array only if it is not already there
+userSchema.statics.removeRequest = async function (contactId, _id) {
     const user = await this.findByIdAndUpdate(
         { _id: _id },
         { $pull: { requests: contactId } },

@@ -2,18 +2,24 @@ const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
 
 const createConversation = async (req, res) => {
-    const { usersArray, isGroup, user } = req.body;
+    const { users } = req.body;
+    const { _id } = req.user;
+    const isGroupConversation = users.length > 1;
 
-    const contactId = usersArray[0];
+    // If not a group conversation remove conversation request from contact.
+    if (!isGroupConversation) {
+        const contactId = users[0];
+        User.removeRequest(contactId, _id);
+    };
 
-    if (!isGroup) {
-        User.removeRequest(contactId, user._id);
-    }
-
-    usersArray.push(user._id);
+    // add logged in user to users
+    users.push(_id);
 
     try {
-        const newConversation = await Conversation.new(usersArray, isGroup);
+        const newConversation = await Conversation.new(
+            users,
+            isGroupConversation
+        );
         res.status(200).json(newConversation);
     } catch (error) {
         res.status(400).json({ error: error.message });
