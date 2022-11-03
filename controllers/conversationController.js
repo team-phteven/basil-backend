@@ -2,7 +2,15 @@ const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
 
 const createConversation = async (req, res) => {
-    const { usersArray, isGroup } = req.body;
+    const { usersArray, isGroup, user } = req.body;
+
+    const contactId = usersArray[0];
+
+    if (!isGroup) {
+        User.removeRequest(contactId, user._id);
+    }
+
+    usersArray.push(user._id);
 
     try {
         const newConversation = await Conversation.new(usersArray, isGroup);
@@ -59,10 +67,33 @@ const renameGroupConversation = async (req, res) => {
 const addToGroupConversation = async (req, res) => {
     const { conversationId, contactId } = req.body;
 
-    const updatedConversation = await Chat.findByIdAndUpdate(
-        chatId,
+    const updatedConversation = await Conversation.findByIdAndUpdate(
+        conversationId,
         {
-            $push: { users: conversationId },
+            $push: { users: contactId },
+        },
+        {
+            new: true,
+        }
+    )
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password");
+
+    if (!updatedConversation) {
+        res.status(404);
+        throw new Error("Chat Not Found");
+    } else {
+        res.json(updatedConversation);
+    }
+};
+
+const removeFromGroupConversation = async (req, res) => {
+    const { conversationId, contactId } = req.body;
+
+    const updatedConversation = await Conversation.findByIdAndUpdate(
+        conversationId,
+        {
+            $pull: { users: contactId },
         },
         {
             new: true,
@@ -84,5 +115,5 @@ module.exports = {
     getConversations,
     renameGroupConversation,
     addToGroupConversation,
-    //removeFromGroup
+    removeFromGroupConversation,
 };
