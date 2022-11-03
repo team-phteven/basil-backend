@@ -57,6 +57,17 @@ const declineRequest = async (req, res) => {
     }
 };
 
+const acceptRequest = async (req, res) => {
+    try {
+        const { contactId } = req.body;
+        const { _id } = req.user;
+        const user = await User.declineRequest(contactId, _id);
+        res.status(200).json({ message: "success", user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 const testAuth = async (req, res) => {
     res.status(200).json({
         message: "Authorization success",
