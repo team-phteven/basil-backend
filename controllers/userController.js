@@ -50,18 +50,7 @@ const declineRequest = async (req, res) => {
     try {
         const { contactId } = req.body;
         const { _id } = req.user;
-        const user = await User.declineRequest(contactId, _id);
-        res.status(200).json({ message: "success", user });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-const acceptRequest = async (req, res) => {
-    try {
-        const { contactId } = req.body;
-        const { _id } = req.user;
-        const user = await User.declineRequest(contactId, _id);
+        const user = await User.removeRequest(contactId, _id);
         res.status(200).json({ message: "success", user });
     } catch (error) {
         res.status(400).json({ error: error.message });
