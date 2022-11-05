@@ -13,7 +13,7 @@ const login = async (req, res) => {
         const token = createToken(user._id);
         res.status(200).json({ name, email, avatar: user.avatar, token });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(404).json({ error: error.message });
     }
 };
 
