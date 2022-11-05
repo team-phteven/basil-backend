@@ -16,36 +16,50 @@ const getMessages = async (req, res) => {
 };
 
 const sendMessage = async (req, res) => {
-    const { content, conversationId } = req.body;
+    const { body, conversationId } = req.body;
 
-    if (!content || !conversationId) {
-        console.log("Invalid data passed into request");
+    if (!body || !conversationId) {
+        console.log("Missing content or conversation");
         return res.sendStatus(400);
     }
 
     let messageData = {
         sender: req.user._id,
-        content: content,
-        chat: conversationId,
+        body: body,
+        conversation: conversationId,
     };
 
     try {
-        let newMessage = await Message.create(messageData);
+        let message = await Message.create(messageData);
 
-        newMessage = await message
-            .populate("sender", "name pic")
-            .execPopulate();
-        newMessage = await message.populate("chat").execPopulate();
-        newMessage = await User.populate(message, {
-            path: "chat.users",
-            select: "name pic email",
-        });
+        // message = await message.populate("sender", "name pic");
+        // message = await message.populate("conversation");
+        // message = await User.populate(message, {
+        //     path: "conversation.users",
+        //     select: "name pic email",
+        // });
 
-        await Chat.findByIdAndUpdate(req.body.chatId, {
-            latestMessage: message,
-        });
+        let updatedConversation = await Conversation.findByIdAndUpdate(
+            conversationId,
+            {
+                latestMessage: message,
+            },
+            {
+                new: true,
+            }
+        );
 
-        res.json(message);
+        updatedConversation = await Conversation.findByIdAndUpdate(
+            conversationId,
+            {
+                $push: { messages: message },
+            },
+            {
+                new: true,
+            }
+        );
+
+        res.json(updatedConversation);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);

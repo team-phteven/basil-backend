@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const connectToDB = require("./utils/connectToDB");
 const dotenv = require("dotenv").config();
 
@@ -12,6 +13,12 @@ const messageRoutes = require("./routes/messageRoutes");
 const app = express();
 //  connect to database
 connectToDB();
+// cors
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+    })
+);
 
 app.listen(process.env.PORT, () => {
     console.log("Express listening on port..." + process.env.PORT);
