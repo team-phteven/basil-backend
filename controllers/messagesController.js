@@ -44,27 +44,6 @@ const sendMessage = async (req, res) => {
             message
         );
 
-        // let updatedConversation = await Conversation.findByIdAndUpdate(
-        //     conversationId,
-        //     {
-        //         latestMessage: message,
-        //     },
-        //     {
-        //         new: true,
-        //     }
-        // );
-        // 6365ffa30105b715afbe0ac4
-        // 6365ffb6392fb477c5566f42
-        // updatedConversation = await Conversation.findByIdAndUpdate(
-        //     conversationId,
-        //     {
-        //         $push: { messages: message },
-        //     },
-        //     {
-        //         new: true,
-        //     }
-        // );
-
         res.json(updatedConversation);
     } catch (error) {
         res.status(400);

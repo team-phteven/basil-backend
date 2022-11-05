@@ -42,7 +42,7 @@ const addRequest = async (req, res) => {
         const user = await User.addRequest(contactId, _id);
         res.status(200).json({ message: "success", user });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message + bruh });
     }
 };
 
