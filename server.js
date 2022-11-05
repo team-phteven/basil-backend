@@ -1,6 +1,7 @@
 const express = require("express");
 const connectToDB = require("./utils/connectToDB");
 const dotenv = require("dotenv").config();
+const cors = require('cors');
 
 const userRoutes = require("./routes/userRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
@@ -18,8 +19,7 @@ app.listen(process.env.PORT, () => {
 });
 
 // ----- MIDDLEWARE -----
-
-// use json method
+app.use(cors())
 app.use(express.json());
 
 // log requests
