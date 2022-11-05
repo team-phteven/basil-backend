@@ -46,6 +46,19 @@ const addRequest = async (req, res) => {
     }
 };
 
+// adding a request with just bearer token and email
+const addRequestByEmail = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log(email);
+        const contactId = req.user._id;
+        const user = await User.addRequestByEmail(contactId, email);
+        res.status(200).json({ message: "success", user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 const declineRequest = async (req, res) => {
     try {
         const { contactId } = req.body;
@@ -68,6 +81,17 @@ const acceptRequest = async (req, res) => {
     }
 };
 
+const getLoggedInUser = async () => {
+    try {
+        const { contactId } = req.body;
+        const { _id } = req.user;
+        const user = await User.declineRequest(contactId, _id);
+        res.status(200).json({ message: "success", user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 const testAuth = async (req, res) => {
     res.status(200).json({
         message: "Authorization success",
@@ -75,4 +99,12 @@ const testAuth = async (req, res) => {
     });
 };
 
-module.exports = { login, signup, addRequest, declineRequest, testAuth };
+module.exports = {
+    login,
+    signup,
+    addRequest,
+    declineRequest,
+    testAuth,
+    addRequestByEmail,
+    getLoggedInUser,
+};
