@@ -39,4 +39,31 @@ conversationSchema.statics.new = async function (usersArray, isGroup) {
     return newConversation;
 };
 
+conversationSchema.statics.addMessageToConversation = async function (
+    conversationId,
+    message
+) {
+    let updatedConversation = await this.findByIdAndUpdate(
+        conversationId,
+        {
+            latestMessage: message,
+        },
+        {
+            new: true,
+        }
+    );
+
+    updatedConversation = await this.findByIdAndUpdate(
+        conversationId,
+        {
+            $push: { messages: message },
+        },
+        {
+            new: true,
+        }
+    );
+
+    return updatedConversation;
+};
+
 module.exports = mongoose.model("Conversation", conversationSchema);
