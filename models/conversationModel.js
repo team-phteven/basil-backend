@@ -15,7 +15,9 @@ const conversationSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-conversationSchema.statics.new = async function (usersArray, isGroup) {
+conversationSchema.statics.new = async function (userId, usersArray, isGroup) {
+    usersArray.push(userId);
+
     const conversationData = {
         isGroupConversation: isGroup,
         users: usersArray,

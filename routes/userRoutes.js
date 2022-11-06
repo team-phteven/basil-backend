@@ -7,7 +7,7 @@ const {
     addRequest,
     getRequests,
     declineRequest,
-    // acceptRequest,
+    acceptRequest,
     addRequestByEmail,
     testAuth,
 } = require("../controllers/userController");
@@ -20,7 +20,7 @@ router.post("/sign-up", signup);
 // adding a request with just an email
 router.put("/add-request", authorize, addRequestByEmail);
 router.put("/decline-request", authorize, declineRequest);
-// router.put("/accept-request", authorize, acceptRequest);
+router.put("/accept-request", authorize, acceptRequest);
 // getting user requests
 router.get("/get-requests", authorize, getRequests);
 

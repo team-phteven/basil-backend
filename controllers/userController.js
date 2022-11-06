@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
+const Conversation = require("../models/conversationModel");
 const jwt = require("jsonwebtoken");
 const { findById } = require("../models/userModel");
+const conversationModel = require("../models/conversationModel");
 
 const createToken = (_id) => {
     return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
@@ -73,11 +75,24 @@ const declineRequest = async (req, res) => {
 
 const acceptRequest = async (req, res) => {
     try {
+        // contactId is the user we're accepting
         const { contactId } = req.body;
+        // _id is the id of the person who's accepting the request
         const { _id } = req.user;
+        const { isGroupConversation } = req.body;
+
+        // create a new conversation between the accepting user and the requesting user
+        const newConversation = await Conversation.new(
+            _id,
+            [contactId],
+            isGroupConversation
+        );
+
         const user = await User.declineRequest(contactId, _id);
-        res.status(200).json({ message: "success", user });
+        console.log(newConversation, user);
+        res.status(200).json({ _id });
     } catch (error) {
+        console.log(error.message);
         res.status(400).json({ error: error.message });
     }
 };
@@ -110,4 +125,5 @@ module.exports = {
     testAuth,
     addRequestByEmail,
     getRequests,
+    acceptRequest,
 };
