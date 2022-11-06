@@ -2,8 +2,8 @@ const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
 
 const createConversation = async (req, res) => {
-    const { usersArray, isGroup, user } = req.body;
-
+    const { usersArray, isGroup } = req.body;
+    const { user } = req;
     const contactId = usersArray[0];
 
     if (!isGroup) {

@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const { findById } = require("../models/userModel");
 
 const createToken = (_id) => {
     return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
@@ -81,12 +82,14 @@ const acceptRequest = async (req, res) => {
     }
 };
 
-const getLoggedInUser = async () => {
+const getRequests = async (req, res) => {
     try {
-        const { contactId } = req.body;
         const { _id } = req.user;
-        const user = await User.declineRequest(contactId, _id);
-        res.status(200).json({ message: "success", user });
+        const currentUser = await User.findById(_id).populate(
+            "requests",
+            "-password"
+        );
+        res.json(currentUser.requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -106,5 +109,5 @@ module.exports = {
     declineRequest,
     testAuth,
     addRequestByEmail,
-    getLoggedInUser,
+    getRequests,
 };
