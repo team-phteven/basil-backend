@@ -2,18 +2,20 @@ const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
 
 const createConversation = async (req, res) => {
+    // here users is the array of users sent with the request.
+    // the incoming array doesn't include the local user sending the request
     const { users } = req.body;
-    const { _id } = req.user;
+    const localId = req.user._id;
     const isGroupConversation = users.length > 1;
 
     // If not a group conversation remove conversation request from contact.
     if (!isGroupConversation) {
-        const contactId = users[0];
-        User.removeRequest(contactId, _id);
-    };
+        const acceptedId = users[0];
+        User.removeRequest(acceptedId, localId);
+    }
 
     // add logged in user to users
-    users.push(_id);
+    users.push(localId);
 
     try {
         const newConversation = await Conversation.new(

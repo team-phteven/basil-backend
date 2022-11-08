@@ -37,10 +37,24 @@ const signup = async (req, res) => {
 
 const addRequest = async (req, res) => {
     try {
-        const { contactId } = req.body;
-        const { _id } = req.user;
-        const user = await User.addRequest(contactId, _id);
+        const { email } = req.body;
+        const localId = req.user._id;
+        const user = await User.addRequestByEmail(localId, email);
         res.status(200).json({ message: "success", user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// get user's incoming requests
+const getRequests = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const currentUser = await User.findById(_id).populate(
+            "requests",
+            "-password"
+        );
+        res.json(currentUser.requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -64,4 +78,11 @@ const testAuth = async (req, res) => {
     });
 };
 
-module.exports = { login, signup, addRequest, declineRequest, testAuth };
+module.exports = {
+    login,
+    signup,
+    getRequests,
+    addRequest,
+    declineRequest,
+    testAuth,
+};

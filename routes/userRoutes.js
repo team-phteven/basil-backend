@@ -7,6 +7,7 @@ const {
     addRequest,
     declineRequest,
     testAuth,
+    getRequests,
 } = require("../controllers/userController");
 const { authorize } = require("../middleware/authorize");
 
@@ -14,6 +15,7 @@ router.post("/log-in", login);
 router.post("/sign-up", signup);
 router.put("/add-request", authorize, addRequest);
 router.put("/decline-request", authorize, declineRequest);
+router.get("/get-requests", authorize, getRequests);
 
 // test for authorization
 router.get("/test-auth", authorize, testAuth);

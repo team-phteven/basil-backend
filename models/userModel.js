@@ -27,12 +27,12 @@ const userSchema = new Schema({
     avatar: {
         type: String,
         required: true,
-        default: 'http://localhost:3000/avatar.png'
+        default: "http://localhost:3000/avatar.png",
     },
     requests: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: "User",
         },
     ],
     // conversations: [
@@ -45,7 +45,13 @@ const userSchema = new Schema({
 
 // ----- STATIC METHODS -----
 
-userSchema.statics.signup = async function (firstName,  lastName, email, password, avatar) {
+userSchema.statics.signup = async function (
+    firstName,
+    lastName,
+    email,
+    password,
+    avatar
+) {
     if (!firstName || !lastName || !email || !password) {
         throw Error("All fields must be filled.");
     }
@@ -67,7 +73,13 @@ userSchema.statics.signup = async function (firstName,  lastName, email, passwor
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ firstName, lastName, email, password: hash, avatar });
+    const user = await this.create({
+        firstName,
+        lastName,
+        email,
+        password: hash,
+        avatar,
+    });
 
     return user;
 };
@@ -91,12 +103,14 @@ userSchema.statics.login = async function (email, password) {
     return user;
 };
 
-userSchema.statics.addRequest = async function (contactId, _id) {
+userSchema.statics.addRequestByEmail = async function (localId, email) {
     // find requested user by email and push the logged in user's id to their requests
     // addToSet means it will push to the array only if it is not already there
-    const user = await this.findByIdAndUpdate(
-        { _id: contactId },
-        { $addToSet: {requests: _id }},
+
+    // find user by email and add the logged in user
+    const user = await this.findOneAndUpdate(
+        { email: email },
+        { $addToSet: { requests: localId } },
         { new: true }
     );
     // throw error if user doesn't exist
@@ -106,10 +120,10 @@ userSchema.statics.addRequest = async function (contactId, _id) {
     return user;
 };
 
-userSchema.statics.removeRequest = async function (contactId, _id) {
+userSchema.statics.removeRequest = async function (acceptedId, localId) {
     const user = await this.findByIdAndUpdate(
-        { _id: _id },
-        { $pull: { requests: contactId } },
+        { _id: localId },
+        { $pull: { requests: acceptedId } },
         { new: true }
     );
     // throw error if user doesn't exist
