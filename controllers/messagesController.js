@@ -32,7 +32,7 @@ const sendMessage = async (req, res) => {
     try {
         let message = await Message.create(messageData);
 
-        // message = await message.populate("sender", "name pic");
+        message = await message.populate("sender", "name avatar");
         // message = await message.populate("conversation");
         // message = await User.populate(message, {
         //     path: "conversation.users",
