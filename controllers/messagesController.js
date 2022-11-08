@@ -6,7 +6,7 @@ const Conversation = require("../models/conversationModel");
 const getMessages = async (req, res) => {
     try {
         const messages = await Message.find({ chat: req.body.conversationId })
-            .populate("sender", "name pic email")
+            .populate("sender", "firstName avatar")
             .populate("conversation");
         res.json(messages);
     } catch (error) {
