@@ -5,7 +5,7 @@ const Conversation = require("../models/conversationModel");
 
 const getMessages = async (req, res) => {
     try {
-        const messages = await Message.find({ chat: req.conversationId })
+        const messages = await Message.find({ chat: req.body.conversationId })
             .populate("sender", "name pic email")
             .populate("conversation");
         res.json(messages);
@@ -26,7 +26,7 @@ const sendMessage = async (req, res) => {
     let messageData = {
         sender: req.user._id,
         content: content,
-        chat: conversationId,
+        conversation: conversationId,
     };
 
     try {
@@ -35,13 +35,13 @@ const sendMessage = async (req, res) => {
         newMessage = await message
             .populate("sender", "name pic")
             .execPopulate();
-        newMessage = await message.populate("chat").execPopulate();
+        newMessage = await message.populate("conversation").execPopulate();
         newMessage = await User.populate(message, {
             path: "chat.users",
             select: "name pic email",
         });
 
-        await Chat.findByIdAndUpdate(req.body.chatId, {
+        await Conversation.findByIdAndUpdate(req.body.conversationId, {
             latestMessage: message,
         });
 
