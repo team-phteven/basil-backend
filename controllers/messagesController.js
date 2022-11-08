@@ -19,7 +19,7 @@ const sendMessage = async (req, res) => {
     const { content, conversationId } = req.body;
 
     if (!content || !conversationId) {
-        console.log("Invalid data passed into request");
+        console.log("Missing content or conversation");
         return res.sendStatus(400);
     }
 
@@ -32,20 +32,19 @@ const sendMessage = async (req, res) => {
     try {
         let message = await Message.create(messageData);
 
-        newMessage = await message
-            .populate("sender", "name pic")
-            .execPopulate();
-        newMessage = await message.populate("conversation").execPopulate();
-        newMessage = await User.populate(newMessage, {
-            path: "conversation.users",
-            select: "name avatar email",
-        });
+        // message = await message.populate("sender", "name pic");
+        // message = await message.populate("conversation");
+        // message = await User.populate(message, {
+        //     path: "conversation.users",
+        //     select: "name pic email",
+        // });
 
-        await Conversation.findByIdAndUpdate(req.body.conversationId, {
-            latestMessage: newMessage,
-        });
+        // let updatedConversation = await Conversation.addMessageToConversation(
+        //     conversationId,
+        //     message
+        // );
 
-        res.json(newMessage);
+        res.json(message);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
