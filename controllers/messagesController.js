@@ -30,22 +30,22 @@ const sendMessage = async (req, res) => {
     };
 
     try {
-        let newMessage = await Message.create(messageData);
+        let message = await Message.create(messageData);
 
         newMessage = await message
             .populate("sender", "name pic")
             .execPopulate();
         newMessage = await message.populate("conversation").execPopulate();
-        newMessage = await User.populate(message, {
-            path: "chat.users",
-            select: "name pic email",
+        newMessage = await User.populate(newMessage, {
+            path: "conversation.users",
+            select: "name avatar email",
         });
 
         await Conversation.findByIdAndUpdate(req.body.conversationId, {
-            latestMessage: message,
+            latestMessage: newMessage,
         });
 
-        res.json(message);
+        res.json(newMessage);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
