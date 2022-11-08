@@ -8,7 +8,7 @@ const {
 
 const router = express.Router();
 
-router.get("/", authorize, getMessages);
+router.get("/:conversationId", authorize, getMessages);
 router.post("/", authorize, sendMessage);
 
 module.exports = router;

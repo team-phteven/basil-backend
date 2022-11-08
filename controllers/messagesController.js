@@ -5,7 +5,9 @@ const Conversation = require("../models/conversationModel");
 
 const getMessages = async (req, res) => {
     try {
-        const messages = await Message.find({ chat: req.body.conversationId })
+        const messages = await Message.find({
+            conversation: req.params.conversationId,
+        })
             .sort({ createdAt: -1 })
             .populate("sender", "firstName avatar lastName")
             .populate("conversation");

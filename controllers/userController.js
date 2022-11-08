@@ -36,6 +36,7 @@ const signup = async (req, res) => {
 };
 
 const addRequest = async (req, res) => {
+    console.log(req.body.email);
     try {
         const { email } = req.body;
         const localId = req.user._id;
@@ -55,6 +56,7 @@ const getRequests = async (req, res) => {
             "-password"
         );
         res.json(currentUser.requests);
+        console.log("from backedn:   --> " + currentUser.requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

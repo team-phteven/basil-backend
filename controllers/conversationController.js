@@ -11,7 +11,7 @@ const createConversation = async (req, res) => {
     // If not a group conversation remove conversation request from contact.
     if (!isGroupConversation) {
         const acceptedId = users[0];
-        User.removeRequest(acceptedId, localId);
+        await User.removeRequest(acceptedId, localId);
     }
 
     // add logged in user to users
