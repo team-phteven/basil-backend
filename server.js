@@ -1,7 +1,12 @@
 const express = require("express");
+const app = express();
 const connectToDB = require("./utils/connectToDB");
 const dotenv = require("dotenv").config();
-const cors = require('cors');
+const cors = require("cors");
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
 const userRoutes = require("./routes/userRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
@@ -9,17 +14,19 @@ const messageRoutes = require("./routes/messageRoutes");
 
 // ----- SERVER CONFIG -----
 
-// create app instance
-const app = express();
 //  connect to database
 connectToDB();
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
     console.log("Express listening on port..." + process.env.PORT);
 });
 
+io.on("connection", (socket) => {
+    console.log("a user connected");
+});
+
 // ----- MIDDLEWARE -----
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 
 // log requests
