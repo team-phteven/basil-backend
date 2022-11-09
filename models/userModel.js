@@ -125,12 +125,12 @@ userSchema.statics.removeRequest = async function (acceptedId, localId) {
         { _id: localId },
         { $pull: { requests: acceptedId } },
         { new: true }
-    );
+    ).populate("requests", "-password");
     // throw error if user doesn't exist
     if (!user) {
         throw Error("User with this ID does not exist.");
     }
-    return user;
+    return user.requests;
 };
 
 module.exports = mongoose.model("User", userSchema);

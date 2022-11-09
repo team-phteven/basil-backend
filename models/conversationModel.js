@@ -16,7 +16,6 @@ const conversationSchema = mongoose.Schema(
 );
 
 conversationSchema.statics.new = async function (users, isGroupConversation) {
-
     const exists = await this.find({
         isGroupConversation: false,
         $and: [
@@ -29,8 +28,20 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
         throw new Error("Conversation already exists.");
     }
 
-    const newConversation = await this.create({users, isGroupConversation});
+    const newConversation = await this.create({ users, isGroupConversation });
     return newConversation;
+};
+
+conversationSchema.statics.addLatestMessage = async function (
+    conversationId,
+    messageId
+) {
+    const updatedConversation = await this.findByIdAndUpdate(
+        { _id: conversationId },
+        { latestMessage: messageId },
+        { new: true }
+    );
+    return updatedConversation;
 };
 
 module.exports = mongoose.model("Conversation", conversationSchema);

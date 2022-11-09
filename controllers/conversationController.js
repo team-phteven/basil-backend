@@ -7,11 +7,12 @@ const createConversation = async (req, res) => {
     const { users } = req.body;
     const localId = req.user._id;
     const isGroupConversation = users.length > 1;
+    let requests = [];
 
     // If not a group conversation remove conversation request from contact.
     if (!isGroupConversation) {
         const acceptedId = users[0];
-        await User.removeRequest(acceptedId, localId);
+        requests = await User.removeRequest(acceptedId, localId);
     }
 
     // add logged in user to users
@@ -22,7 +23,8 @@ const createConversation = async (req, res) => {
             users,
             isGroupConversation
         );
-        res.status(200).json(newConversation);
+        console.log(requests);
+        res.status(200).json(requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -36,7 +38,7 @@ const getConversations = async (req, res) => {
             .populate("users", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage")
-            .sort({ updatedAt: -1 });
+            .sort({ "latestMessage.createdAt": 1 });
 
         const populatedResults = await User.populate(results, {
             path: "latestMessage.sender",

@@ -42,12 +42,13 @@ const sendMessage = async (req, res) => {
         //     select: "name pic email",
         // });
 
-        // let updatedConversation = await Conversation.addMessageToConversation(
-        //     conversationId,
-        //     message
-        // );
+        let updatedConversation = await Conversation.addLatestMessage(
+            conversationId,
+            message._id
+        );
 
         res.json(message);
+        console.log(updatedConversation);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
