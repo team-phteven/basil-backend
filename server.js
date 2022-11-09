@@ -1,12 +1,7 @@
 const express = require("express");
-const app = express();
 const connectToDB = require("./utils/connectToDB");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
-const http = require("http");
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
 
 const userRoutes = require("./routes/userRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
@@ -14,16 +9,41 @@ const messageRoutes = require("./routes/messageRoutes");
 
 // ----- SERVER CONFIG -----
 
-//  connect to database
-connectToDB();
+// web socket server initialization
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-server.listen(process.env.PORT, () => {
-    console.log("Express listening on port..." + process.env.PORT);
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: { origin: "http://localhost:3000" },
 });
 
 io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("connected to socket");
+    socket.on("setup", (email) => {
+        socket.join(email);
+        socket.emit("connected");
+    });
+
+    socket.on("join conversation", (conversation) => {
+        socket.join(conversation);
+        console.log("User joined conversation:" + conversation);
+    });
 });
+
+httpServer.listen(5000);
+
+//  connect to database
+connectToDB();
+
+// io.on("connection", (socket) => {
+//     console.log("socket log: ---" + socket.id); // x8WIv7-mJelg7on_ALbx
+// });
+
+// server.listen(process.env.PORT, () => {
+//     console.log("Express listening on port..." + process.env.PORT);
+// });
 
 // ----- MIDDLEWARE -----
 app.use(cors());
