@@ -36,11 +36,11 @@ const sendMessage = async (req, res) => {
         let message = await Message.create(messageData);
 
         message = await message.populate("sender", "firstName avatar");
-        // message = await message.populate("conversation");
-        // message = await User.populate(message, {
-        //     path: "conversation.users",
-        //     select: "name pic email",
-        // });
+        // message = await message.populate("conversation", "users");
+        message = await message.populate({
+            path: "conversation",
+            populate: { path: "users" },
+        });
 
         let updatedConversation = await Conversation.addLatestMessage(
             conversationId,
@@ -48,7 +48,7 @@ const sendMessage = async (req, res) => {
         );
 
         res.json(message);
-        console.log(updatedConversation);
+        console.log(message);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
