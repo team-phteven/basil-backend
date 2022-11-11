@@ -56,7 +56,6 @@ const getRequests = async (req, res) => {
             "-password"
         );
         res.json(currentUser.requests);
-        console.log("from backedn:   --> " + currentUser.requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

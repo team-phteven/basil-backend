@@ -20,25 +20,17 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
+    console.log("new socket connection: " + socket.id)
     socket.on("setup", (email) => {
+        console.log("socket connect with email: " + email)
         socket.join(email);
-        console.log("user joined socket on email ---> " + email);
-        socket.emit("connected");
-    });
-
-    socket.on("join conversation", (conversation) => {
-        socket.join(conversation);
-        console.log("User joined conversation:" + conversation);
     });
 
     socket.on("new message", (newMessageReceived) => {
-        console.log(
-            "new message received in backend!! -> " + newMessageReceived
-        );
         let conversation = newMessageReceived.conversation;
 
         if (!conversation.users) return console.log("no users in the convo");
-
+        console.log(newMessageReceived)
         conversation.users.forEach((user) => {
             if (user._id == newMessageReceived.sender._id) return;
 
