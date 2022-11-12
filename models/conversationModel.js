@@ -61,4 +61,17 @@ conversationSchema.statics.addSeconds = async function (
     return updatedConversation;
 };
 
+conversationSchema.statics.settleBill = async function (conversationId) {
+    const updatedConversation = await Conversation.findByIdAndUpdate(
+        conversationId,
+        {
+            billedSeconds: 0,
+        },
+        {
+            new: true,
+        }
+    );
+    return updatedConversation;
+};
+
 module.exports = mongoose.model("Conversation", conversationSchema);
