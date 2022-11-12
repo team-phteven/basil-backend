@@ -16,7 +16,7 @@ const { Server } = require("socket.io");
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-    cors: { origin: "http://localhost:3000" },
+    cors: { origin: process.env.SOCKET_URI },
 });
 
 io.on("connection", (socket) => {
@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
         conversation.users.forEach((user) => {
             if (user._id == newMessageReceived.sender._id) return;
 
-            socket.in(user.email).emit("message received", newMessageReceived);
+            io.in(user.email).emit("message received", newMessageReceived);
             console.log(
                 "new message received by:" +
                     user.email +
@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
     });
 });
 
-httpServer.listen(5000);
+httpServer.listen(process.env.PORT || 5000);
 
 //  connect to database
 connectToDB();
