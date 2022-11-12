@@ -10,6 +10,7 @@ const conversationSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Message",
         },
+        billedSeconds: { type: Number },
         groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     },
     { timestamps: true }
@@ -40,6 +41,22 @@ conversationSchema.statics.addLatestMessage = async function (
         { _id: conversationId },
         { latestMessage: messageId },
         { new: true }
+    );
+    return updatedConversation;
+};
+
+conversationSchema.statics.addSeconds = async function (
+    conversationId,
+    seconds
+) {
+    const updatedConversation = await Conversation.findByIdAndUpdate(
+        conversationId,
+        {
+            $inc: { billedSeconds: seconds },
+        },
+        {
+            new: true,
+        }
     );
     return updatedConversation;
 };
