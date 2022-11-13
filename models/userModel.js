@@ -62,7 +62,7 @@ userSchema.statics.signup = async function (
     //     throw Error("Password not strong enough");
     // }
     if (!avatar) {
-        avatar = "http://localhost:3000/avatar.png";
+        avatar = `${process.env.SOCKET_URI}/avatar.png`;
     }
 
     const exists = await this.findOne({ email });
