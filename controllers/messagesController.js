@@ -48,7 +48,6 @@ const sendMessage = async (req, res) => {
         );
 
         res.json(message);
-        console.log(message);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
