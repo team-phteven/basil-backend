@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./userModel");
 
 const conversationSchema = mongoose.Schema(
     {
@@ -10,7 +11,10 @@ const conversationSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Message",
         },
-        billedSeconds: { type: Number },
+        billableSeconds: {
+            type: Map,
+            of: Number,
+        },
         groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     },
     { timestamps: true }
@@ -29,7 +33,20 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
         throw new Error("Conversation already exists.");
     }
 
-    const newConversation = await this.create({ users, isGroupConversation });
+    let billableSeconds = {};
+    console.log("users array passed to backend:  " + users);
+    for (let user of users) {
+        // user = await User.findById(user);
+        // billableSeconds[`${user._id}-${user.firstName}`] = 0;
+        billableSeconds[user] = 0;
+    }
+
+    const newConversation = await this.create({
+        users,
+        isGroupConversation,
+        billableSeconds,
+    });
+    console.log(newConversation);
     return newConversation;
 };
 
@@ -47,31 +64,37 @@ conversationSchema.statics.addLatestMessage = async function (
 
 conversationSchema.statics.addSeconds = async function (
     conversationId,
+    userId,
     seconds
 ) {
-    const updatedConversation = await Conversation.findByIdAndUpdate(
+    const conversation = await this.findById(conversationId);
+    const bill = conversation.billableSeconds;
+    const newSeconds = bill.get(userId) + seconds;
+    bill.set(userId, newSeconds);
+
+    const updatedConversation = await this.findByIdAndUpdate(
         conversationId,
         {
-            $inc: { billedSeconds: seconds },
+            billableSeconds: bill,
         },
         {
             new: true,
         }
     );
+
     return updatedConversation;
 };
 
-conversationSchema.statics.settleBill = async function (conversationId) {
-    const updatedConversation = await Conversation.findByIdAndUpdate(
-        conversationId,
-        {
-            billedSeconds: 0,
-        },
-        {
-            new: true,
-        }
-    );
-    return updatedConversation;
+conversationSchema.statics.getInfo = async function (conversationId) {
+    const conversation = await Conversation.findById(conversationId);
+
+    for (let user of conversation.users) {
+        user = await User.findById(user._id);
+        billableSeconds[`${user._id}-${user.firstName}`] = 0;
+        billableSeconds[user] = 0;
+    }
+
+    return conversation;
 };
 
 module.exports = mongoose.model("Conversation", conversationSchema);
