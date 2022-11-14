@@ -137,18 +137,6 @@ const addSeconds = async (req, res) => {
     }
 };
 
-const getConversationInfo = async (req, res) => {
-    const { conversationId } = req.body;
-    const conversationInfo = await Conversation.getInfo(conversationId);
-
-    if (!conversationInfo) {
-        res.status(404);
-        throw new Error("Conversation Not Found");
-    } else {
-        res.json(conversationInfo);
-    }
-};
-
 module.exports = {
     createConversation,
     getConversations,
@@ -156,5 +144,4 @@ module.exports = {
     addToGroupConversation,
     removeFromGroupConversation,
     addSeconds,
-    getConversationInfo,
 };

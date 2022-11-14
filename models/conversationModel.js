@@ -85,16 +85,4 @@ conversationSchema.statics.addSeconds = async function (
     return updatedConversation;
 };
 
-conversationSchema.statics.getInfo = async function (conversationId) {
-    const conversation = await Conversation.findById(conversationId);
-
-    for (let user of conversation.users) {
-        user = await User.findById(user._id);
-        billableSeconds[`${user._id}-${user.firstName}`] = 0;
-        billableSeconds[user] = 0;
-    }
-
-    return conversation;
-};
-
 module.exports = mongoose.model("Conversation", conversationSchema);
