@@ -72,6 +72,39 @@ const declineRequest = async (req, res) => {
     }
 };
 
+const updateDetails = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const {
+            firstName,
+            lastName,
+            email
+        } = req.body;
+        console.log(_id + firstName + lastName + email)
+        const user = await User.updateDetails({_id, firstName, lastName, email});
+        const name = `${user.firstName} ${user.lastName}`;
+        const token = createToken(user._id);
+        res.status(200).json({ name, email, avatar: user.avatar, token });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+const updatePassword = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const { oldPassword, newPassword } = req.body;
+        const user = await User.updatePassword({
+            _id,
+            oldPassword,
+            newPassword
+        });
+        res.status(200).json({ message: "success" });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 const testAuth = async (req, res) => {
     res.status(200).json({
         message: "Authorization success",
@@ -85,5 +118,7 @@ module.exports = {
     getRequests,
     addRequest,
     declineRequest,
-    testAuth,
+    updateDetails,
+    updatePassword,
+    testAuth
 };

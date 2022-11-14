@@ -135,4 +135,62 @@ userSchema.statics.removeRequest = async function (acceptedId, localId) {
     return user.requests;
 };
 
+userSchema.statics.updateDetails = async function ({
+    _id,
+    firstName,
+    lastName,
+    email,
+}) {
+    console.log(email);
+
+    if (!firstName || !lastName || !email) {
+        throw Error("All fields must be complete");
+    }
+
+    const user = await this.findByIdAndUpdate(
+        { _id },
+        { firstName, lastName, email },
+        { new: true }
+    );
+
+    if (!user) {
+        throw Error("Cannot update this User");
+    }
+
+    return user;
+};
+
+userSchema.statics.updatePassword = async function ({
+    _id,
+    oldPassword,
+    newPassword,
+}) {
+    if (!oldPassword || !newPassword) {
+        throw Error("All fields must be complete");
+    }
+
+    let user = await this.findOne({ _id });
+
+    if (!user) {
+        throw Error("User not found.");
+    }
+
+    const match = await bcrypt.compare(oldPassword, user.password);
+
+    if (!match) {
+        throw Error("Incorrect password");
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(newPassword, salt);
+
+    user = await this.findByIdAndUpdate(
+        { _id },
+        { password: hash },
+        { new: true }
+    );
+
+    return user;
+};
+
 module.exports = mongoose.model("User", userSchema);
