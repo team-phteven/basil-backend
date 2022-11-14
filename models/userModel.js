@@ -27,7 +27,7 @@ const userSchema = new Schema({
     avatar: {
         type: String,
         required: true,
-        default: "http://localhost:3000/avatar.png",
+        default: `http://localhost:3000/avatar.svg`,
     },
     requests: [
         {
@@ -62,7 +62,9 @@ userSchema.statics.signup = async function (
     //     throw Error("Password not strong enough");
     // }
     if (!avatar) {
-        avatar = "http://localhost:3000/avatar.png";
+        avatar = `${process.env.SOCKET_URI}/avatar${
+            Math.floor(Math.random() * 5) + 1
+        }.svg`;
     }
 
     const exists = await this.findOne({ email });
