@@ -121,7 +121,8 @@ const removeFromGroupConversation = async (req, res) => {
 };
 
 const addSeconds = async (req, res) => {
-    const { conversationId, userId, seconds } = req.body;
+    const { conversationId, seconds } = req.body;
+    const userId = req.user._id;
 
     const updatedConversation = await Conversation.addSeconds(
         conversationId,
