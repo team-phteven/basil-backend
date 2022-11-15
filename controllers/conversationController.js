@@ -120,10 +120,29 @@ const removeFromGroupConversation = async (req, res) => {
     }
 };
 
+const addSeconds = async (req, res) => {
+    const { conversationId, seconds } = req.body;
+    const userId = req.user._id;
+
+    const updatedConversation = await Conversation.addSeconds(
+        conversationId,
+        userId,
+        seconds
+    );
+
+    if (!updatedConversation) {
+        res.status(404);
+        throw new Error("Conversation Not Found");
+    } else {
+        res.json(updatedConversation);
+    }
+};
+
 module.exports = {
     createConversation,
     getConversations,
     renameGroupConversation,
     addToGroupConversation,
     removeFromGroupConversation,
+    addSeconds,
 };

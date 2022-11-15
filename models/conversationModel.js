@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./userModel");
 
 const conversationSchema = mongoose.Schema(
     {
@@ -9,6 +10,10 @@ const conversationSchema = mongoose.Schema(
         latestMessage: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Message",
+        },
+        billableSeconds: {
+            type: Map,
+            of: Number,
         },
         groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     },
@@ -28,7 +33,20 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
         throw new Error("Conversation already exists.");
     }
 
-    const newConversation = await this.create({ users, isGroupConversation });
+    let billableSeconds = {};
+    console.log("users array passed to backend:  " + users);
+    for (let user of users) {
+        // user = await User.findById(user);
+        // billableSeconds[`${user._id}-${user.firstName}`] = 0;
+        billableSeconds[user] = 0;
+    }
+
+    const newConversation = await this.create({
+        users,
+        isGroupConversation,
+        billableSeconds,
+    });
+    console.log(newConversation);
     return newConversation;
 };
 
@@ -41,6 +59,29 @@ conversationSchema.statics.addLatestMessage = async function (
         { latestMessage: messageId },
         { new: true }
     );
+    return updatedConversation;
+};
+
+conversationSchema.statics.addSeconds = async function (
+    conversationId,
+    userId,
+    seconds
+) {
+    const conversation = await this.findById(conversationId);
+    const bill = conversation.billableSeconds;
+    const newSeconds = bill.get(userId) + seconds;
+    bill.set(userId, newSeconds);
+
+    const updatedConversation = await this.findByIdAndUpdate(
+        conversationId,
+        {
+            billableSeconds: bill,
+        },
+        {
+            new: true,
+        }
+    );
+
     return updatedConversation;
 };
 
