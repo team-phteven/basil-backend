@@ -160,6 +160,45 @@ userSchema.statics.updateDetails = async function ({
     return user;
 };
 
+userSchema.statics.deleteAvatar = async function ({
+    _id,
+}) {
+
+    const avatar = `${process.env.SOCKET_URI}/avatar${
+        Math.floor(Math.random() * 5) + 1
+    }.svg`;
+
+    const user = await this.findByIdAndUpdate(
+        { _id },
+        { avatar },
+        { new: true }
+    );
+
+    if (!user) {
+        throw Error("Cannot update this User");
+    }
+
+    return user;
+};
+
+userSchema.statics.updateAvatar = async function ({ _id, avatar }) {
+    if (!avatar) {
+        throw Error("No avatar attached to request");
+    }
+
+    const user = await this.findByIdAndUpdate(
+        { _id },
+        { avatar },
+        { new: true }
+    );
+
+    if (!user) {
+        throw Error("Cannot update this User");
+    }
+
+    return user;
+};
+
 userSchema.statics.updatePassword = async function ({
     _id,
     oldPassword,
