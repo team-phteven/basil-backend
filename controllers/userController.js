@@ -80,15 +80,44 @@ const updateDetails = async (req, res) => {
             lastName,
             email
         } = req.body;
-        console.log(_id + firstName + lastName + email)
         const user = await User.updateDetails({_id, firstName, lastName, email});
         const name = `${user.firstName} ${user.lastName}`;
         const token = createToken(user._id);
-        res.status(200).json({ name, email, avatar: user.avatar, token });
+        res.status(200).json({ name, email: user.email, avatar: user.avatar, token });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 }
+
+const updateAvatar = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const { avatar } = req.body;
+        const user = await User.updateAvatar({
+            _id,
+            avatar
+        });
+        const name = `${user.firstName} ${user.lastName}`;
+        const token = createToken(user._id);
+        res.status(200).json({ name, email: user.email, avatar: user.avatar, token });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const deleteAvatar = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const user = await User.deleteAvatar({
+            _id,
+        });
+        const name = `${user.firstName} ${user.lastName}`;
+        const token = createToken(user._id);
+        res.status(200).json({ name, email: user.email, avatar: user.avatar, token });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 const updatePassword = async (req, res) => {
     try {
@@ -120,5 +149,7 @@ module.exports = {
     declineRequest,
     updateDetails,
     updatePassword,
+    updateAvatar,
+    deleteAvatar,
     testAuth
 };
