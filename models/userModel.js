@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const { findById } = require("./conversationModel");
 
 const Schema = mongoose.Schema;
 
@@ -29,11 +30,17 @@ const userSchema = new Schema({
         required: true,
         default: `http://localhost:3000/avatar.svg`,
     },
+    contacts: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "User",
+        }
+    ],
     requests: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-        },
+        }
     ],
     // conversations: [
     //     {
@@ -231,5 +238,32 @@ userSchema.statics.updatePassword = async function ({
 
     return user;
 };
+
+userSchema.statics.addContact = async function (contactId, _id) {
+
+    // Find by ID and add contact's ID to contacts
+    const user = await this.findByIdAndUpdate(
+        { _id },
+        { $addToSet: { contacts: contactId } },
+        { new: true }
+    );
+
+    if (!user) {
+        throw Error("Cannot update this User");
+    }
+
+};
+
+
+userSchema.statics.getContacts = async function ({
+    _id
+}) {
+    const user = this.findById(_id).populate(
+        "contacts",
+        "-password"
+    );
+
+    return user
+}
 
 module.exports = mongoose.model("User", userSchema);
