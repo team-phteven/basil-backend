@@ -13,6 +13,8 @@ const createConversation = async (req, res) => {
     if (!isGroupConversation) {
         const acceptedId = users[0];
         requests = await User.removeRequest(acceptedId, localId);
+        User.addContact(users[0], localId);
+        User.addContact(localId, users[0]);
     }
 
     // add logged in user to users

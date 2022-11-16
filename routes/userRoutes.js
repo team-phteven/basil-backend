@@ -11,7 +11,8 @@ const {
     updateDetails,
     updatePassword,
     deleteAvatar,
-    updateAvatar
+    updateAvatar,
+    getContacts
 } = require("../controllers/userController");
 const { authorize } = require("../middleware/authorize");
 
@@ -24,6 +25,7 @@ router.put("/update-password", authorize, updatePassword);
 router.put("/update-avatar", authorize, updateAvatar);
 router.put("/delete-avatar", authorize, deleteAvatar);
 router.get("/get-requests", authorize, getRequests);
+router.get("/get-contacts", authorize, getContacts);
 
 // test for authorization
 router.get("/test-auth", authorize, testAuth);

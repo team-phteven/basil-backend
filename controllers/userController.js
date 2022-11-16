@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const res = require("express/lib/response");
 
 const createToken = (_id) => {
     return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
@@ -134,6 +135,16 @@ const updatePassword = async (req, res) => {
     }
 };
 
+const getContacts = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const user = await User.getContacts({ _id })
+        res.status(200).json({ contacts: user.contacts })
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 const testAuth = async (req, res) => {
     res.status(200).json({
         message: "Authorization success",
@@ -151,5 +162,6 @@ module.exports = {
     updatePassword,
     updateAvatar,
     deleteAvatar,
-    testAuth
+    testAuth,
+    getContacts,
 };
