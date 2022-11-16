@@ -21,17 +21,20 @@ const conversationSchema = mongoose.Schema(
 );
 
 conversationSchema.statics.new = async function (users, isGroupConversation) {
-    const exists = await this.find({
-        isGroupConversation: false,
-        $and: [
-            { users: { $elemMatch: { $eq: users[0] } } },
-            { users: { $elemMatch: { $eq: users[1] } } },
-        ],
-    });
+    console.log("NEW CONVO MODEL METHOD HIT=====>");
 
-    if (exists[0]) {
-        throw new Error("Conversation already exists.");
-    }
+    // is the 'exists' code obselete?
+    // const exists = await this.find({
+    //     isGroupConversation: false,
+    //     $and: [
+    //         { users: { $elemMatch: { $eq: users[0] } } },
+    //         { users: { $elemMatch: { $eq: users[1] } } },
+    //     ],
+    // });
+
+    // if (exists[0]) {
+    //     throw new Error("Conversation already exists.");
+    // }
 
     let billableSeconds = {};
     console.log("users array passed to backend:  " + users);
@@ -110,9 +113,6 @@ conversationSchema.statics.addUsersToConvo = async function (
                 users: { $each: userIds },
             },
         },
-        // {
-        //     users: conversationUsers,
-        // },
         {
             new: true,
         }

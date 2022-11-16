@@ -23,7 +23,7 @@ const createConversation = async (req, res) => {
             users,
             isGroupConversation
         );
-        console.log(requests);
+        console.log(newConversation);
         res.status(200).json(requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
