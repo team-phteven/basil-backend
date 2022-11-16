@@ -7,6 +7,7 @@ const {
     addToGroupConversation,
     removeFromGroupConversation,
     addSeconds,
+    addUsersToConvo,
 } = require("../controllers/conversationController");
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.post("/", authorize, createConversation);
 router.put("/rename", authorize, renameGroupConversation);
 router.put("/add", authorize, addToGroupConversation);
 router.put("/add-seconds", authorize, addSeconds);
+router.put("/add-users", authorize, addUsersToConvo);
 router.put("/remove", authorize, removeFromGroupConversation);
 
 module.exports = router;

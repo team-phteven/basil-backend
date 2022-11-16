@@ -21,23 +21,24 @@ const conversationSchema = mongoose.Schema(
 );
 
 conversationSchema.statics.new = async function (users, isGroupConversation) {
-    const exists = await this.find({
-        isGroupConversation: false,
-        $and: [
-            { users: { $elemMatch: { $eq: users[0] } } },
-            { users: { $elemMatch: { $eq: users[1] } } },
-        ],
-    });
+    console.log("NEW CONVO MODEL METHOD HIT=====>");
 
-    if (exists[0]) {
-        throw new Error("Conversation already exists.");
-    }
+    // is the 'exists' code obselete?
+    // const exists = await this.find({
+    //     isGroupConversation: false,
+    //     $and: [
+    //         { users: { $elemMatch: { $eq: users[0] } } },
+    //         { users: { $elemMatch: { $eq: users[1] } } },
+    //     ],
+    // });
+
+    // if (exists[0]) {
+    //     throw new Error("Conversation already exists.");
+    // }
 
     let billableSeconds = {};
     console.log("users array passed to backend:  " + users);
     for (let user of users) {
-        // user = await User.findById(user);
-        // billableSeconds[`${user._id}-${user.firstName}`] = 0;
         billableSeconds[user] = 0;
     }
 
@@ -81,6 +82,43 @@ conversationSchema.statics.addSeconds = async function (
             new: true,
         }
     );
+
+    return updatedConversation;
+};
+
+conversationSchema.statics.addUsersToConvo = async function (
+    conversationId,
+    userIds
+) {
+    // finds conversation based on convo id passed in
+    const conversation = await this.findById(conversationId);
+    // gets the billable seconds property on that convo
+    const bill = conversation.billableSeconds;
+    let conversationUsers = conversation.users;
+    console.log("model hit!=====>");
+
+    // adds the user id as key and 0 as value to that billable seconds property
+    userIds.forEach((user) => {
+        bill.set(user, bill.get(user) ? bill.get(user) : 0);
+        // conversationUsers.push(user);
+    });
+    console.log("bill after forEach:   " + bill);
+
+    // updates the conversation with new billable seconds property with added users and adds each user id to its users property
+    const updatedConversation = await this.findByIdAndUpdate(
+        conversationId,
+        {
+            billableSeconds: bill,
+            $push: {
+                users: { $each: userIds },
+            },
+        },
+        {
+            new: true,
+        }
+    );
+
+    console.log("updatedConversation from model!=====>" + updatedConversation);
 
     return updatedConversation;
 };

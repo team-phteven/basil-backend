@@ -23,7 +23,7 @@ const createConversation = async (req, res) => {
             users,
             isGroupConversation
         );
-        console.log(requests);
+        console.log(newConversation);
         res.status(200).json(requests);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -138,6 +138,26 @@ const addSeconds = async (req, res) => {
     }
 };
 
+const addUsersToConvo = async (req, res) => {
+    // here users is the array of users sent with the request.
+    // the incoming array doesn't include the local user sending the request
+    const { conversationId, users } = req.body;
+    console.log("addUsersToConvo controller hit====>");
+    console.log("conversationId:  " + conversationId);
+    console.log("users: " + users);
+
+    try {
+        const updatedConversation = await Conversation.addUsersToConvo(
+            conversationId,
+            users
+        );
+        console.log(updatedConversation);
+        res.status(200).json(updatedConversation);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 module.exports = {
     createConversation,
     getConversations,
@@ -145,4 +165,5 @@ module.exports = {
     addToGroupConversation,
     removeFromGroupConversation,
     addSeconds,
+    addUsersToConvo,
 };
