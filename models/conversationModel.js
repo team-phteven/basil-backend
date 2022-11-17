@@ -116,7 +116,7 @@ conversationSchema.statics.addUsersToConvo = async function (
         {
             new: true,
         }
-    );
+    ).populate('users', '-password')
 
     console.log("updatedConversation from model!=====>" + updatedConversation);
 
