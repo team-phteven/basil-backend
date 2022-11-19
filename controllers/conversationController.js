@@ -87,7 +87,9 @@ const addToGroupConversation = async (req, res) => {
         {
             new: true,
         }
-    ).populate("users", "-password").populate("groupAdmin", "-password");
+    )
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password");
 
     if (!updatedConversation) {
         res.status(404);

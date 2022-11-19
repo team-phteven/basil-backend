@@ -24,6 +24,10 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
     console.log("NEW CONVO MODEL METHOD HIT=====>");
 
     // is the 'exists' code obselete?
+    // Not obsolete, we shouldn't allow two conversations between the same two users. (which aren't group conversations)
+    // I can instead add this check to the request itself, so a request to a contact with an already accepted contact
+    // can't be sent.
+
     // const exists = await this.find({
     //     isGroupConversation: false,
     //     $and: [

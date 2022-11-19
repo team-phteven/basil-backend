@@ -113,6 +113,23 @@ userSchema.statics.login = async function (email, password) {
 };
 
 userSchema.statics.addRequestByEmail = async function (localId, email) {
+
+    // find local usr's contacts
+    const localUser = await this.getContacts({_id: localId})
+    // extract emails
+    const contacts = localUser.contacts.map((contact) => (contact.email))
+    // make sure they're not already a contact
+    const exists = contacts.includes(email)
+    // throw error if already contacts
+    if (exists) {
+        throw Error("Already a contact.");
+    }
+
+    // Cannot add yourself as a contact
+    if (localUser.email == email) {
+        throw Error("Cannot add yourself as contact.");
+    }
+
     // find requested user by email and push the logged in user's id to their requests
     // addToSet means it will push to the array only if it is not already there
 
@@ -124,17 +141,21 @@ userSchema.statics.addRequestByEmail = async function (localId, email) {
     );
     // throw error if user doesn't exist
     if (!user) {
-        throw Error("User with this ID does not exist.");
+        throw Error("No users with this email");
     }
     return user;
 };
 
-userSchema.statics.removeRequest = async function (acceptedId, localId) {
+userSchema.statics.removeRequest = async function (contactId, localId) {
     const user = await this.findByIdAndUpdate(
         { _id: localId },
-        { $pull: { requests: acceptedId } },
+        { $pull: { requests: contactId } },
         { new: true }
     ).populate("requests", "-password");
+
+    console.log(contactId)
+    console.log(localId)
+    console.log(user.requests)
     // throw error if user doesn't exist
     if (!user) {
         throw Error("User with this ID does not exist.");
