@@ -27,6 +27,8 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
     // can't be sent. UPDATE: Lag on the front end can bypass the check on the request, I think we should leave this check here as
     // well, just in case.
 
+    // TO-DO: For some reason this error was throwing even for group conversations, I've wrapped it in an if statement but really
+    // we should try and get the db query working properly. `isGroupConversation: false, $and: ` should have worked??
     if (!isGroupConversation) {
         const exists = await this.find({
             isGroupConversation: false,
