@@ -21,27 +21,27 @@ const conversationSchema = mongoose.Schema(
 );
 
 conversationSchema.statics.new = async function (users, isGroupConversation) {
-
     // is the 'exists' code obselete?
     // Not obsolete, we shouldn't allow two conversations between the same two users. (which aren't group conversations)
     // I can instead add this check to the request itself, so a request to a contact with an already accepted contact
     // can't be sent. UPDATE: Lag on the front end can bypass the check on the request, I think we should leave this check here as
     // well, just in case.
 
-    const exists = await this.find({
-        isGroupConversation: false,
-        $and: [
-            { users: { $elemMatch: { $eq: users[0] } } },
-            { users: { $elemMatch: { $eq: users[1] } } },
-        ],
-    });
+    if (!isGroupConversation) {
+        const exists = await this.find({
+            isGroupConversation: false,
+            $and: [
+                { users: { $elemMatch: { $eq: users[0] } } },
+                { users: { $elemMatch: { $eq: users[1] } } },
+            ],
+        });
 
-    if (exists[0]) {
-        throw new Error("Conversation already exists.");
+        if (exists[0]) {
+            throw new Error("Conversation already exists.");
+        }
     }
 
     let billableSeconds = {};
-    console.log("users array passed to backend:  " + users);
     for (let user of users) {
         billableSeconds[user] = 0;
     }
@@ -51,7 +51,6 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
         isGroupConversation,
         billableSeconds,
     });
-    console.log(newConversation);
     return newConversation;
 };
 
@@ -118,8 +117,7 @@ conversationSchema.statics.addUsersToConvo = async function (
         {
             new: true,
         }
-    ).populate('users', '-password')
-
+    ).populate("users", "-password");
 
     return updatedConversation;
 };
