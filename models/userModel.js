@@ -153,9 +153,6 @@ userSchema.statics.removeRequest = async function (contactId, localId) {
         { new: true }
     ).populate("requests", "-password");
 
-    console.log(contactId)
-    console.log(localId)
-    console.log(user.requests)
     // throw error if user doesn't exist
     if (!user) {
         throw Error("User with this ID does not exist.");
@@ -169,7 +166,6 @@ userSchema.statics.updateDetails = async function ({
     lastName,
     email,
 }) {
-    console.log(email);
 
     if (!firstName || !lastName || !email) {
         throw Error("All fields must be complete");
