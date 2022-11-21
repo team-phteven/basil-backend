@@ -16,15 +16,14 @@ const conversationSchema = mongoose.Schema(
             of: Number,
         },
         groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        groupName: {type: String, trim: true}
     },
     { timestamps: true }
 );
 
-conversationSchema.statics.new = async function (users, isGroupConversation) {
+conversationSchema.statics.new = async function (users, isGroupConversation, groupName) {
     // is the 'exists' code obselete?
-    // Not obsolete, we shouldn't allow two conversations between the same two users. (which aren't group conversations)
-    // I can instead add this check to the request itself, so a request to a contact with an already accepted contact
-    // can't be sent. UPDATE: Lag on the front end can bypass the check on the request, I think we should leave this check here as
+    // UPDATE: Lag on the front end can bypass the check on the request, I think we should leave this check here as
     // well, just in case.
 
     // TO-DO: For some reason this error was throwing even for group conversations, I've wrapped it in an if statement but really
@@ -48,11 +47,11 @@ conversationSchema.statics.new = async function (users, isGroupConversation) {
         billableSeconds[user] = 0;
     }
 
-    const newConversation = await this.create({
-        users,
-        isGroupConversation,
-        billableSeconds,
-    });
+    const conversation = isGroupConversation
+        ? { users, isGroupConversation, billableSeconds, groupName }
+        : { users, isGroupConversation, billableSeconds}; 
+
+    const newConversation = await this.create(conversation);
     return newConversation;
 };
 

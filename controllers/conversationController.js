@@ -1,10 +1,11 @@
 const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
+const mongoose = require('mongoose')
 
 const createConversation = async (req, res) => {
     // here users is the array of users sent with the request.
     // the incoming array doesn't include the local user sending the request
-    const { users } = req.body;
+    const { users, groupName } = req.body;
     const localId = req.user._id;
     const isGroupConversation = users.length > 1;
     let requests = [];
@@ -23,7 +24,8 @@ const createConversation = async (req, res) => {
     try {
         const newConversation = await Conversation.new(
             users,
-            isGroupConversation
+            isGroupConversation,
+            groupName
         );
         res.status(200).json(requests);
     } catch (error) {
@@ -53,12 +55,12 @@ const getConversations = async (req, res) => {
 };
 
 const renameGroupConversation = async (req, res) => {
-    const { conversationId, conversationName } = req.body;
+    const { conversationId, groupName } = req.body;
 
     const updatedConversation = await Conversation.findByIdAndUpdate(
         conversationId,
         {
-            conversationName: conversationName,
+            groupName: groupName,
         },
         {
             new: true,
@@ -99,12 +101,13 @@ const addToGroupConversation = async (req, res) => {
 };
 
 const removeFromGroupConversation = async (req, res) => {
-    const { conversationId, contactId } = req.body;
+    const { conversationId} = req.body;
+    const { _id } = req.user;
 
     const updatedConversation = await Conversation.findByIdAndUpdate(
-        conversationId,
+        mongoose.Types.ObjectId(conversationId),
         {
-            $pull: { users: contactId },
+            $pull: { users: mongoose.Types.ObjectId(_id) },
         },
         {
             new: true,
