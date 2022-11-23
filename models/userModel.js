@@ -34,20 +34,14 @@ const userSchema = new Schema({
         {
             type: mongoose.Schema.ObjectId,
             ref: "User",
-        }
+        },
     ],
     requests: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-        }
+        },
     ],
-    // conversations: [
-    //     {
-    //         type: mongoose.SchemaTypes.ObjectId,
-    //         ref: Conversation,
-    //     },
-    // ],
 });
 
 // ----- STATIC METHODS -----
@@ -65,9 +59,6 @@ userSchema.statics.signup = async function (
     if (!validator.isEmail(email)) {
         throw Error("Email is not valid");
     }
-    // if (!validator.isStrongPassword(password)) {
-    //     throw Error("Password not strong enough");
-    // }
     if (!avatar) {
         avatar = `${process.env.SOCKET_URI}/avatar${
             Math.floor(Math.random() * 5) + 1
@@ -113,13 +104,12 @@ userSchema.statics.login = async function (email, password) {
 };
 
 userSchema.statics.addRequestByEmail = async function (localId, email) {
-
-    // find local usr's contacts
-    const localUser = await this.getContacts({_id: localId})
+    // find local user's contacts
+    const localUser = await this.getContacts({ _id: localId });
     // extract emails
-    const contacts = localUser.contacts.map((contact) => (contact.email))
+    const contacts = localUser.contacts.map((contact) => contact.email);
     // make sure they're not already a contact
-    const exists = contacts.includes(email)
+    const exists = contacts.includes(email);
     // throw error if already contacts
     if (exists) {
         throw Error("Already a contact.");
@@ -147,6 +137,7 @@ userSchema.statics.addRequestByEmail = async function (localId, email) {
 };
 
 userSchema.statics.removeRequest = async function (contactId, localId) {
+    // removes the requesting user's id from the declining user's array of requests
     const user = await this.findByIdAndUpdate(
         { _id: localId },
         { $pull: { requests: contactId } },
@@ -166,7 +157,6 @@ userSchema.statics.updateDetails = async function ({
     lastName,
     email,
 }) {
-
     if (!firstName || !lastName || !email) {
         throw Error("All fields must be complete");
     }
@@ -184,14 +174,12 @@ userSchema.statics.updateDetails = async function ({
     return user;
 };
 
-userSchema.statics.deleteAvatar = async function ({
-    _id,
-}) {
-
+userSchema.statics.deleteAvatar = async function ({ _id }) {
     const avatar = `${process.env.SOCKET_URI}/avatar${
         Math.floor(Math.random() * 5) + 1
     }.svg`;
 
+    // finds user by ID and replaces their avatar with a random one
     const user = await this.findByIdAndUpdate(
         { _id },
         { avatar },
@@ -210,6 +198,7 @@ userSchema.statics.updateAvatar = async function ({ _id, avatar }) {
         throw Error("No avatar attached to request");
     }
 
+    // finds user by ID and replaces their avatar with the avatar that was passed in
     const user = await this.findByIdAndUpdate(
         { _id },
         { avatar },
@@ -257,7 +246,6 @@ userSchema.statics.updatePassword = async function ({
 };
 
 userSchema.statics.addContact = async function (contactId, _id) {
-
     // Find by ID and add contact's ID to contacts
     const user = await this.findByIdAndUpdate(
         { _id },
@@ -268,19 +256,12 @@ userSchema.statics.addContact = async function (contactId, _id) {
     if (!user) {
         throw Error("Cannot update this User");
     }
-
 };
 
+userSchema.statics.getContacts = async function ({ _id }) {
+    const user = this.findById(_id).populate("contacts", "-password");
 
-userSchema.statics.getContacts = async function ({
-    _id
-}) {
-    const user = this.findById(_id).populate(
-        "contacts",
-        "-password"
-    );
-
-    return user
-}
+    return user;
+};
 
 module.exports = mongoose.model("User", userSchema);
