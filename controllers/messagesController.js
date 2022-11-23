@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
 const Message = require("../models/messageModel");
-const User = require("../models/userModel");
 const Conversation = require("../models/conversationModel");
 
 const getMessages = async (req, res) => {
     try {
+        // find all messages that have a conversation id matching the id passed in with the request
         const messages = await Message.find({
             conversation: req.params.conversationId,
         })
             .sort({ createdAt: -1 })
+            // populate the details of the message's sender
             .populate("sender", "firstName avatar lastName")
             .populate("conversation");
         res.json(messages);
@@ -32,15 +32,17 @@ const sendMessage = async (req, res) => {
     };
 
     try {
+        // create a new message with the data passed in from the request
         let message = await Message.create(messageData);
 
+        // populate refs of the message
         message = await message.populate("sender", "firstName avatar");
-        // message = await message.populate("conversation", "users");
         message = await message.populate({
             path: "conversation",
             populate: { path: "users" },
         });
 
+        // update the associated conversation with the newly created message as its latest message
         let updatedConversation = await Conversation.addLatestMessage(
             conversationId,
             message._id

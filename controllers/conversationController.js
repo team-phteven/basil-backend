@@ -41,7 +41,6 @@ const getConversations = async (req, res) => {
             users: { $elemMatch: { $eq: req.user._id } },
         })
             .populate("users", "-password")
-            .populate("groupAdmin", "-password")
             .populate("latestMessage")
             .sort({ "latestMessage.createdAt": 1 });
 
