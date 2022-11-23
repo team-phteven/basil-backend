@@ -22,11 +22,9 @@ const authorize = async (req, res, next) => {
                 message:
                     "Token verification failed. There was a token attached but it was not valid.",
             });
-            console.log("Token verification failed.");
         }
     } else {
         res.status(401).json({ message: "Not authorized. Missing token." });
-        console.log("Not authorized. Missing token.");
     }
 };
 

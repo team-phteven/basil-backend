@@ -1,6 +1,6 @@
 const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const createConversation = async (req, res) => {
     // here users is the array of users sent with the request.
@@ -21,6 +21,7 @@ const createConversation = async (req, res) => {
     // add logged in user to users
     users.push(localId);
 
+    // Use Conversation static method to create new Conversation document, passing in parameters destructured from the request
     try {
         const newConversation = await Conversation.new(
             users,
@@ -101,7 +102,7 @@ const addToGroupConversation = async (req, res) => {
 };
 
 const removeFromGroupConversation = async (req, res) => {
-    const { conversationId} = req.body;
+    const { conversationId } = req.body;
     const { _id } = req.user;
 
     const updatedConversation = await Conversation.findByIdAndUpdate(

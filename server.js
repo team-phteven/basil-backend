@@ -20,27 +20,19 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-    console.log("new socket connection: " + socket.id)
     socket.on("setup", (email) => {
-        console.log("socket connect with email: " + email)
         socket.join(email);
     });
 
     socket.on("new message", (newMessageReceived) => {
         let conversation = newMessageReceived.conversation;
 
-        if (!conversation.users) return console.log("no users in the convo");
-        console.log(newMessageReceived)
+        if (!conversation.users) return;
+
         conversation.users.forEach((user) => {
             if (user._id == newMessageReceived.sender._id) return;
 
             io.in(user.email).emit("message received", newMessageReceived);
-            console.log(
-                "new message received by:" +
-                    user.email +
-                    " :" +
-                    newMessageReceived.content
-            );
         });
     });
 });
@@ -49,14 +41,6 @@ httpServer.listen(process.env.PORT || 5000);
 
 //  connect to database
 connectToDB();
-
-// io.on("connection", (socket) => {
-//     console.log("socket log: ---" + socket.id); // x8WIv7-mJelg7on_ALbx
-// });
-
-// server.listen(process.env.PORT, () => {
-//     console.log("Express listening on port..." + process.env.PORT);
-// });
 
 // ----- MIDDLEWARE -----
 app.use(cors());
