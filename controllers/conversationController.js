@@ -36,6 +36,7 @@ const createConversation = async (req, res) => {
 
 const getConversations = async (req, res) => {
     try {
+        // find Conversations for a specific user by retrieving all Conversations where their User ref property matches the id of the User passed in with the request
         const results = await Conversation.find({
             users: { $elemMatch: { $eq: req.user._id } },
         })
@@ -44,6 +45,7 @@ const getConversations = async (req, res) => {
             .populate("latestMessage")
             .sort({ "latestMessage.createdAt": 1 });
 
+        // Populate the returned conversations' latestMessage.sender property with their details
         const populatedResults = await User.populate(results, {
             path: "latestMessage.sender",
             select: "name pic email",
@@ -58,6 +60,8 @@ const getConversations = async (req, res) => {
 const renameGroupConversation = async (req, res) => {
     const { conversationId, groupName } = req.body;
 
+    // Find a conversation by id passed in with request
+    // Update the groupName property of that conversation with the groupName passed in with the request
     const updatedConversation = await Conversation.findByIdAndUpdate(
         conversationId,
         {
@@ -67,8 +71,8 @@ const renameGroupConversation = async (req, res) => {
             new: true,
         }
     )
-        .populate("users", "-password")
-        .populate("groupAdmin", "-password");
+        // populate the users
+        .populate("users", "-password");
 
     if (!updatedConversation) {
         res.status(404);

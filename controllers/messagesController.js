@@ -22,7 +22,6 @@ const sendMessage = async (req, res) => {
     const { content, conversationId } = req.body;
 
     if (!content || !conversationId) {
-        console.log("Missing content or conversation");
         return res.sendStatus(400);
     }
 

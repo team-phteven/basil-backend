@@ -37,7 +37,6 @@ const signup = async (req, res) => {
 };
 
 const addRequest = async (req, res) => {
-    console.log(req.body.email);
     try {
         const { email } = req.body;
         const localId = req.user._id;
@@ -76,19 +75,25 @@ const declineRequest = async (req, res) => {
 const updateDetails = async (req, res) => {
     try {
         const { _id } = req.user;
-        const {
+        const { firstName, lastName, email } = req.body;
+        const user = await User.updateDetails({
+            _id,
             firstName,
             lastName,
-            email
-        } = req.body;
-        const user = await User.updateDetails({_id, firstName, lastName, email});
+            email,
+        });
         const name = `${user.firstName} ${user.lastName}`;
         const token = createToken(user._id);
-        res.status(200).json({ name, email: user.email, avatar: user.avatar, token });
+        res.status(200).json({
+            name,
+            email: user.email,
+            avatar: user.avatar,
+            token,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}
+};
 
 const updateAvatar = async (req, res) => {
     try {
@@ -96,11 +101,16 @@ const updateAvatar = async (req, res) => {
         const { avatar } = req.body;
         const user = await User.updateAvatar({
             _id,
-            avatar
+            avatar,
         });
         const name = `${user.firstName} ${user.lastName}`;
         const token = createToken(user._id);
-        res.status(200).json({ name, email: user.email, avatar: user.avatar, token });
+        res.status(200).json({
+            name,
+            email: user.email,
+            avatar: user.avatar,
+            token,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -114,7 +124,12 @@ const deleteAvatar = async (req, res) => {
         });
         const name = `${user.firstName} ${user.lastName}`;
         const token = createToken(user._id);
-        res.status(200).json({ name, email: user.email, avatar: user.avatar, token });
+        res.status(200).json({
+            name,
+            email: user.email,
+            avatar: user.avatar,
+            token,
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -127,7 +142,7 @@ const updatePassword = async (req, res) => {
         const user = await User.updatePassword({
             _id,
             oldPassword,
-            newPassword
+            newPassword,
         });
         res.status(200).json({ message: "success" });
     } catch (error) {
@@ -138,8 +153,8 @@ const updatePassword = async (req, res) => {
 const getContacts = async (req, res) => {
     try {
         const { _id } = req.user;
-        const user = await User.getContacts({ _id })
-        res.status(200).json({ contacts: user.contacts })
+        const user = await User.getContacts({ _id });
+        res.status(200).json({ contacts: user.contacts });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
