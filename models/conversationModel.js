@@ -15,13 +15,16 @@ const conversationSchema = mongoose.Schema(
             type: Map,
             of: Number,
         },
-        groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        groupName: {type: String, trim: true}
+        groupName: { type: String, trim: true },
     },
     { timestamps: true }
 );
 
-conversationSchema.statics.new = async function (users, isGroupConversation, groupName) {
+conversationSchema.statics.new = async function (
+    users,
+    isGroupConversation,
+    groupName
+) {
     // is the 'exists' code obselete?
     // UPDATE: Lag on the front end can bypass the check on the request, I think we should leave this check here as
     // well, just in case.
@@ -49,7 +52,7 @@ conversationSchema.statics.new = async function (users, isGroupConversation, gro
 
     const conversation = isGroupConversation
         ? { users, isGroupConversation, billableSeconds, groupName }
-        : { users, isGroupConversation, billableSeconds}; 
+        : { users, isGroupConversation, billableSeconds };
 
     const newConversation = await this.create(conversation);
     return newConversation;

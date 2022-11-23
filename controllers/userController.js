@@ -1,6 +1,5 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const res = require("express/lib/response");
 
 const createToken = (_id) => {
     return jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "3d" });
@@ -21,6 +20,7 @@ const login = async (req, res) => {
 const signup = async (req, res) => {
     const { firstName, lastName, email, password, avatar } = req.body;
     try {
+        // use the signup User static method to create a new user with the parameters passed in with the request
         const user = await User.signup(
             firstName,
             lastName,
@@ -40,6 +40,7 @@ const addRequest = async (req, res) => {
     try {
         const { email } = req.body;
         const localId = req.user._id;
+        // use User static method to add the local user's id to the other user's list of requests
         const user = await User.addRequestByEmail(localId, email);
         res.status(200).json({ message: "success", user });
     } catch (error) {
@@ -51,6 +52,7 @@ const addRequest = async (req, res) => {
 const getRequests = async (req, res) => {
     try {
         const { _id } = req.user;
+        // find the users in the current user's requests array
         const currentUser = await User.findById(_id).populate(
             "requests",
             "-password"
@@ -65,6 +67,7 @@ const declineRequest = async (req, res) => {
     try {
         const { contactId } = req.body;
         const { _id } = req.user;
+        // use User static method to remove the requesting user's id from the declining user's requests array
         const user = await User.removeRequest(contactId, _id);
         res.status(200).json({ message: "success", user });
     } catch (error) {
@@ -76,6 +79,7 @@ const updateDetails = async (req, res) => {
     try {
         const { _id } = req.user;
         const { firstName, lastName, email } = req.body;
+        // use User static method to update user's details with details passed in from request
         const user = await User.updateDetails({
             _id,
             firstName,
@@ -99,6 +103,7 @@ const updateAvatar = async (req, res) => {
     try {
         const { _id } = req.user;
         const { avatar } = req.body;
+        // use User static method to update user's avatar with avatar passed in from request
         const user = await User.updateAvatar({
             _id,
             avatar,
@@ -119,6 +124,7 @@ const updateAvatar = async (req, res) => {
 const deleteAvatar = async (req, res) => {
     try {
         const { _id } = req.user;
+        // use User static method to delete user's avatar
         const user = await User.deleteAvatar({
             _id,
         });
@@ -139,6 +145,7 @@ const updatePassword = async (req, res) => {
     try {
         const { _id } = req.user;
         const { oldPassword, newPassword } = req.body;
+        // use User static method to delete user's avatar
         const user = await User.updatePassword({
             _id,
             oldPassword,
@@ -153,6 +160,7 @@ const updatePassword = async (req, res) => {
 const getContacts = async (req, res) => {
     try {
         const { _id } = req.user;
+        // use User static method to retrieve a user's contacts
         const user = await User.getContacts({ _id });
         res.status(200).json({ contacts: user.contacts });
     } catch (error) {
