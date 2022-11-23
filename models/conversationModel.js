@@ -20,6 +20,7 @@ const conversationSchema = mongoose.Schema(
     { timestamps: true }
 );
 
+// this static function creates a new Conversation document
 conversationSchema.statics.new = async function (
     users,
     isGroupConversation,
@@ -45,7 +46,9 @@ conversationSchema.statics.new = async function (
         }
     }
 
+    // instantiating an empty object
     let billableSeconds = {};
+    // create a key value pair in the empty object for each user's id
     for (let user of users) {
         billableSeconds[user] = 0;
     }
@@ -54,6 +57,7 @@ conversationSchema.statics.new = async function (
         ? { users, isGroupConversation, billableSeconds, groupName }
         : { users, isGroupConversation, billableSeconds };
 
+    // creates a new conversation document with parameters
     const newConversation = await this.create(conversation);
     return newConversation;
 };
@@ -62,6 +66,7 @@ conversationSchema.statics.addLatestMessage = async function (
     conversationId,
     messageId
 ) {
+    // finds conversation by ID and updates its latest message ref
     const updatedConversation = await this.findByIdAndUpdate(
         { _id: conversationId },
         { latestMessage: messageId },
@@ -75,11 +80,15 @@ conversationSchema.statics.addSeconds = async function (
     userId,
     seconds
 ) {
+    // find conversation by id
     const conversation = await this.findById(conversationId);
+    // get billable seconds of the conversation
     const bill = conversation.billableSeconds;
     const newSeconds = bill.get(userId) + seconds;
+    // increments the seconds for the relevant user
     bill.set(userId, newSeconds);
 
+    // updates the conversation with the updated billable seconds
     const updatedConversation = await this.findByIdAndUpdate(
         conversationId,
         {
