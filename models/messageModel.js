@@ -8,8 +8,7 @@ const messageSchema = mongoose.Schema(
         conversation: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Conversation",
-        },
-        seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        }
     },
     { timestamps: true }
 );

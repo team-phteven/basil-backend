@@ -81,28 +81,6 @@ const renameGroupConversation = async (req, res) => {
     }
 };
 
-const addToGroupConversation = async (req, res) => {
-    const { conversationId, contactId } = req.body;
-
-    // find a conversation by id passed in to request, add the passed in user id to the conversation's list of users
-    const updatedConversation = await Conversation.findByIdAndUpdate(
-        conversationId,
-        {
-            $push: { users: contactId },
-        },
-        {
-            new: true,
-        }
-    ).populate("users", "-password");
-
-    if (!updatedConversation) {
-        res.status(404);
-        throw new Error("Chat Not Found");
-    } else {
-        res.json(updatedConversation);
-    }
-};
-
 const removeFromGroupConversation = async (req, res) => {
     const { conversationId } = req.body;
     const { _id } = req.user;
@@ -166,7 +144,6 @@ module.exports = {
     createConversation,
     getConversations,
     renameGroupConversation,
-    addToGroupConversation,
     removeFromGroupConversation,
     addSeconds,
     addUsersToConvo,

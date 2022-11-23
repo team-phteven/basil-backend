@@ -4,7 +4,6 @@ const {
     createConversation,
     getConversations,
     renameGroupConversation,
-    addToGroupConversation,
     removeFromGroupConversation,
     addSeconds,
     addUsersToConvo,
@@ -15,7 +14,6 @@ const router = express.Router();
 router.get("/", authorize, getConversations);
 router.post("/", authorize, createConversation);
 router.put("/rename", authorize, renameGroupConversation);
-router.put("/add", authorize, addToGroupConversation);
 router.put("/add-seconds", authorize, addSeconds);
 router.put("/add-users", authorize, addUsersToConvo);
 router.put("/remove", authorize, removeFromGroupConversation);
