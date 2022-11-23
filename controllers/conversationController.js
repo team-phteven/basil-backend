@@ -71,7 +71,7 @@ const renameGroupConversation = async (req, res) => {
             new: true,
         }
     )
-        // populate the users
+        // populate the users array of the found conversations with the users' details
         .populate("users", "-password");
 
     if (!updatedConversation) {
@@ -85,6 +85,7 @@ const renameGroupConversation = async (req, res) => {
 const addToGroupConversation = async (req, res) => {
     const { conversationId, contactId } = req.body;
 
+    // find a conversation by id passed in to request, add the passed in user id to the conversation's list of users
     const updatedConversation = await Conversation.findByIdAndUpdate(
         conversationId,
         {
@@ -93,9 +94,7 @@ const addToGroupConversation = async (req, res) => {
         {
             new: true,
         }
-    )
-        .populate("users", "-password")
-        .populate("groupAdmin", "-password");
+    ).populate("users", "-password");
 
     if (!updatedConversation) {
         res.status(404);
@@ -109,6 +108,7 @@ const removeFromGroupConversation = async (req, res) => {
     const { conversationId } = req.body;
     const { _id } = req.user;
 
+    // find conversation by id passed in with request and remove the requesting user's id from the conversation's list of users
     const updatedConversation = await Conversation.findByIdAndUpdate(
         mongoose.Types.ObjectId(conversationId),
         {
@@ -117,9 +117,7 @@ const removeFromGroupConversation = async (req, res) => {
         {
             new: true,
         }
-    )
-        .populate("users", "-password")
-        .populate("groupAdmin", "-password");
+    ).populate("users", "-password");
 
     if (!updatedConversation) {
         res.status(404);
@@ -133,6 +131,7 @@ const addSeconds = async (req, res) => {
     const { conversationId, seconds } = req.body;
     const userId = req.user._id;
 
+    // Use Conversation static method to increment the seconds property for a specific user in a conversation
     const updatedConversation = await Conversation.addSeconds(
         conversationId,
         userId,
@@ -153,6 +152,7 @@ const addUsersToConvo = async (req, res) => {
     const { conversationId, users } = req.body;
 
     try {
+        // uses Conversation static method to add a list of user ids to a conversation's list of users
         const updatedConversation = await Conversation.addUsersToConvo(
             conversationId,
             users
